@@ -1,0 +1,10 @@
+# rust files
+/target
+
+# editor files
+.vs/
+.idea/
+/.scratch/
+.vscode/
+.fleet/
+.scratch/

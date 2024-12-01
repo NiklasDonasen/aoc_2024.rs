@@ -4,56 +4,56 @@ use std::io::{BufRead, BufReader};
 use std::iter::Zip;
 use std::path::PathBuf;
 use std::slice::Iter;
-use relative_path::RelativePath;
 
-fn get_reader(path: PathBuf) -> BufReader<File> {
+fn get_reader(path: &PathBuf) -> BufReader<File> {
     let file = File::open(path);
     let file = match file {
         Ok(file) => file,
-        Err(error) => {
-            match error.kind() {
-                std::io::ErrorKind::NotFound => {
-                    panic!("File not found: {}", error)
-                }
-                _ => {
-                    panic!("Error opening file: {}", error)
-                }
+        Err(error) => match error.kind() {
+            std::io::ErrorKind::NotFound => {
+                panic!("File not found: {}", error)
             }
-        }
+            _ => {
+                panic!("Error opening file: {}", error)
+            }
+        },
     };
 
     BufReader::new(file)
-
 }
 
-fn main() -> std::io::Result<()> {
+fn main() -> anyhow::Result<()> {
     // Reading the input file
-    let root: PathBuf = current_dir()?;
-    let relative_path: &RelativePath = RelativePath::new("day_1/input.txt");
-    let path: PathBuf = relative_path.to_path(root);
-    let reader: BufReader<File> = get_reader(path);
+    let root: PathBuf = current_dir().expect("Not a valid directory.");
+    let reader: BufReader<File> = get_reader(&root.join("day_1").join("input.txt"));
 
     // Define output variables
-    let mut lh:Vec<i32> = vec![];
-    let mut rh:Vec<i32> = vec![];
-    let mut diff:Vec<i32> = vec![];
+    let mut lh: Vec<i32> = vec![];
+    let mut rh: Vec<i32> = vec![];
+    let mut diff: Vec<i32> = vec![];
     let mut similarity: i32 = 0;
 
     // Parse the input
     for line in reader.lines() {
-        let owned_line: String = match line {
-            Ok(line) => line,
-            Err(error) => {
-                panic!("Not able to read line: {}", error)
-            }
-        };
+        let line = line.expect("Not able to read line");
 
-        let temp_parts:Vec<&str> = owned_line.split(" ").collect();
+        let temp_parts: Vec<&str> = line.split(" ").collect();
 
         // Add values to output vectors
-        lh.push(temp_parts.first().expect("Did not find a string.").parse().expect("Could not parse the string."));
-        rh.push(temp_parts.last().expect("Did not find a string.").parse().expect("Could not parse the string."));
-
+        lh.push(
+            temp_parts
+                .first()
+                .expect("Did not find a string.")
+                .parse()
+                .expect("Could not parse the string."),
+        );
+        rh.push(
+            temp_parts
+                .last()
+                .expect("Did not find a string.")
+                .parse()
+                .expect("Could not parse the string."),
+        );
     }
 
     // Sort both vectors
@@ -69,11 +69,12 @@ fn main() -> std::io::Result<()> {
     }
 
     let result_q1: i32 = diff.iter().sum();
-    println!("Result for Q1 is {}", result_q1);
+    println!("Result for Q1 is {result_q1}.");
 
     // Q2
     for number in lh {
-        let temp_occurence: Result<i32, std::num::TryFromIntError> = i32::try_from(rh.iter().filter(|n| **n == number).count());
+        let temp_occurence: Result<i32, std::num::TryFromIntError> =
+            i32::try_from(rh.iter().filter(|n| **n == number).count());
         // Explicit error handling because `TryFromIntError` does not support `?`
         let right_type_occurence = match temp_occurence {
             Ok(temp_occurence) => temp_occurence,
@@ -85,10 +86,8 @@ fn main() -> std::io::Result<()> {
         similarity += number * right_type_occurence;
     }
 
-    println!("Result for Q2 is {}", similarity);
-
+    println!("Result for Q2 is {similarity}.");
 
     // Necessary to be able to use the `?`-magic
     Ok(())
-
 }

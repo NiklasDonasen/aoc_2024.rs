@@ -8,3 +8,6 @@
 .vscode/
 .fleet/
 .scratch/
+
+# input files
+*.txt

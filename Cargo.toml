@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-relative-path = "1.9.3"
+anyhow = "1.0.93"

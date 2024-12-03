@@ -3,7 +3,9 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
-// mod day_2;
+use day_3::solution::solve_day_3;
+
+mod day_3;
 
 fn get_reader(path: &PathBuf) -> BufReader<File> {
     let file = File::open(path);
@@ -23,16 +25,17 @@ fn get_reader(path: &PathBuf) -> BufReader<File> {
 }
 
 fn main() -> anyhow::Result<()> {
-    // Reading the input file
-    let root: PathBuf = current_dir().expect("Not a valid directory.");
-    let reader: BufReader<File> = get_reader(&root.join("src").join("day_3").join("input.txt"));
+    // // Reading the input file
+    // let root: PathBuf = current_dir().expect("Not a valid directory.");
+    // let reader: BufReader<File> = get_reader(&root.join("src").join("day_3").join("input.txt"));
 
-    // Parse the input
-    for line in reader.lines() {
-        let line = line.expect("Not able to read line");
+    // // Parse the input
+    // for line in reader.lines() {
+    //     let line = line.expect("Not able to read line");
 
-        println!("{line}");
-    }
+    // }
 
-    Ok(())
+    solve_day_3()
+
+    // Ok(())
 }
